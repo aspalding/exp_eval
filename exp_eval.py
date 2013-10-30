@@ -8,10 +8,10 @@ value = [False, True, False, False, False]
 
 kb = {key:item for (key,item) in zip(key,value)}
 
-'''
+
 print 'desired result:'
 print (kb['jon'] or kb['chris'] or kb['frank']) and (kb['candy'] or kb['beef'])
-'''
+
 
 def split_clauses(sentence):
     sentence = sentence.replace('(', '')
@@ -38,12 +38,19 @@ print clauses
 keysinclauses = split_keys(clauses)
 print keysinclauses
 
-for clause in keysinclauses:
-    result = False
-    for current_item, next_item in izip(clause, islice(clause, 1, None)):
-        print current_item + ' or ' + next_item
-        result = result or (kb[current_item] or kb[next_item])
-        print result
+def eval_clause(clause, knowledge):
+    result = True
+    for current_item, next_item in izip(clause, islice(clause,1,None)):
+        result = result and (knowledge[current_item] or knowledge[next_item])
+    return result
 
+def eval_sentence(sentence, knowledge):
+    result = True
+    for clause in sentence:
+        result = result and eval_clause(clause,knowledge)
+
+    return result
+
+print(eval_sentence(keysinclauses,kb))
 
 
