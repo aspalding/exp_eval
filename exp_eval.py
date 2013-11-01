@@ -2,16 +2,23 @@ from itertools import izip, islice
 
 __author__ = 'andrew'
 
-key = ['jon', 'chris', 'frank', 'candy', 'beef']
+def kb_model(line):
+    expression_model = line.split(',')
+    expression = expression_model[0]
+    key = []
+    value = []
 
-value = [False, True, False, False, False]
+    for pair in islice(expression_model,1,None):
+        split = pair.split('=')
+        key.append(split[0])
+        if split[1] is 'T':
+            value.append(True)
+        elif split[1] is 'F':
+            value.append(False)
 
-kb = {key:item for (key,item) in zip(key,value)}
+    kb = {key:value for (key,value) in zip(key, value)}
 
-
-print 'desired result:'
-print (kb['jon'] or kb['chris'] or kb['frank']) and (kb['candy'] or kb['beef'])
-
+    return [expression, kb]
 
 def split_clauses(sentence):
     sentence = sentence.replace('(', '')
@@ -29,19 +36,17 @@ def split_keys(clauses):
 
     return keys
 
-
-
-sent = '(jon V chris V frank) ^ (candy V beef)'
-clauses = split_clauses(sent)
-print clauses
-
-keysinclauses = split_keys(clauses)
-print keysinclauses
-
 def eval_clause(clause, knowledge):
-    result = True
+    result = False
     for current_item, next_item in izip(clause, islice(clause,1,None)):
-        result = result and (knowledge[current_item] or knowledge[next_item])
+        if '~' in current_item:
+            temp_item = current_item.replace('~', '')
+            result = result or (not knowledge[temp_item] or knowledge[next_item])
+        elif '~' in next_item:
+            temp_item = next_item.replace('~', '')
+            result = result or (knowledge[current_item] or not knowledge[temp_item])
+        else:
+            result = result or (knowledge[current_item] or knowledge[next_item])
     return result
 
 def eval_sentence(sentence, knowledge):
@@ -51,6 +56,14 @@ def eval_sentence(sentence, knowledge):
 
     return result
 
-print(eval_sentence(keysinclauses,kb))
 
+file = open('sample.txt', 'r')
 
+for line in file:
+    line = line.replace('\n', '')
+    current = kb_model(line)
+    sent = current[0]
+    kb = current[1]
+    clauses = split_clauses(sent)
+    keys_clause = split_keys(clauses)
+    print(eval_sentence(keys_clause, kb))

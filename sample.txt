@@ -1,0 +1,3 @@
+(j V t) ^ (p V q) ^ (~p V t),j=T,t=F,p=F,q=T
+(jon V chris V frank) ^ (candy V beef),jon=F,chris=T,frank=F,candy=F,beef=F
+(C[chile] V C[bolivia] V C[venezuela]) ^ (P[pinera] V P[morales] V ~P[chavez]),C[chile]=T,C[bolivia]=T,C[venezuela]=T,P[pinera]=T,P[morales]=T,P[chavez]=F
