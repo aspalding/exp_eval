@@ -1,4 +1,5 @@
 from itertools import izip, islice
+import sys
 
 __author__ = 'andrew'
 
@@ -56,8 +57,11 @@ def eval_sentence(sentence, knowledge):
 
     return result
 
-
-file = open('sample.txt', 'r')
+if(len(sys.argv) > 1):
+    file = open(sys.argv[1], 'r')
+else:
+    print 'Evaluate your own file by passing python an argument.\nex:\t\t>python exp_eval.py file.txt\n'
+    file = open('sample.txt', 'r')
 
 for line in file:
     line = line.replace('\n', '')
@@ -66,4 +70,4 @@ for line in file:
     kb = current[1]
     clauses = split_clauses(sent)
     keys_clause = split_keys(clauses)
-    print(eval_sentence(keys_clause, kb))
+    print 'Evaluating: \t', sent, ' = ', eval_sentence(keys_clause, kb)
